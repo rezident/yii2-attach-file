@@ -1,0 +1,22 @@
+{
+    "name": "rezident/yii2-attach-file",
+    "description": "This extension for yii2 allows you to attach different uploaded files to models",
+    "type": "yii2-extension",
+    "require": {
+        "yiisoft/yii2": "^2.0",
+        "phpunit/phpunit": "^5.7"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yuri Nazarenko",
+            "email": "mail@rezident.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "rezident\\attachfile\\": "src",
+            "rezident\\attachfile\\tests\\": "tests"
+        }
+    }
+}

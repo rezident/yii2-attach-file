@@ -1,0 +1,9 @@
+/.idea/
+/.vagrant/
+/vendor/
+/src/files/
+Vagrantfile
+php.ini
+/.provision/
+nginx.conf
+yii
