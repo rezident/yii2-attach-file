@@ -1,5 +1,6 @@
 <?php
 
+use rezident\attachfile\models\AttachedFile;
 use yii\db\Migration;
 
 /**
@@ -13,7 +14,7 @@ class m161221_074034_create_attach_file_table extends Migration
      */
     public function up()
     {
-        $this->createTable('{{%attached_file}}', [
+        $this->createTable(AttachedFile::tableName(), [
             'id' => $this->primaryKey(),
             'model_key' => $this->string(64)->notNull(),
             'model_id' => $this->integer()->notNull(),
@@ -25,9 +26,9 @@ class m161221_074034_create_attach_file_table extends Migration
             'uploaded_at' => $this->dateTime()->notNull()
         ]);
 
-        $this->createIndex('idx_model', '{{%attached_file}}', ['model_key', 'model_id']);
-        $this->createIndex('idx_md5_hash', '{{%attached_file}}', 'md5_hash');
-        $this->createIndex('idx_position', '{{%attached_file}}', 'position');
+        $this->createIndex('idx_model', AttachedFile::tableName(), ['model_key', 'model_id']);
+        $this->createIndex('idx_md5_hash', AttachedFile::tableName(), 'md5_hash');
+        $this->createIndex('idx_position', AttachedFile::tableName(), 'position');
     }
 
     /**
@@ -35,6 +36,6 @@ class m161221_074034_create_attach_file_table extends Migration
      */
     public function down()
     {
-        $this->dropTable('{{%attached_file}}');
+        $this->dropTable(AttachedFile::tableName());
     }
 }

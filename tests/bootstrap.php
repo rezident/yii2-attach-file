@@ -24,7 +24,7 @@ $application = new yii\console\Application([
             'class' => AttachFileModule::class,
             'originalsPath' => '@app/files/originals',
             'viewsPath' => '@app/files/views',
-            'webPath' => '@app/files/views'
+            'webPrefix' => '/files'
         ]
     ]
 ]);

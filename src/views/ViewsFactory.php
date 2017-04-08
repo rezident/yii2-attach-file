@@ -4,9 +4,17 @@
 namespace rezident\attachfile\views;
 
 
-use rezident\attachfile\exceptions\SettingsIsIncorrect;
+use rezident\attachfile\exceptions\ViewNotFoundException;
 use rezident\attachfile\models\AttachedFile;
 
+/**
+ * Class ViewsFactory
+ * @author Yuri Nazarenko / rezident <mail@rezident.org>
+ *
+ * @method RawView raw
+ * @method JpgView jpg
+ * @method PngView png
+ */
 class ViewsFactory
 {
     /**
@@ -14,36 +22,46 @@ class ViewsFactory
      */
     private $attachedFile;
 
-    function __construct(AttachedFile $attachedFile)
+    public function __construct(AttachedFile $attachedFile)
     {
         $this->attachedFile = $attachedFile;
     }
 
     /**
-     * @return ImageView
+     * Processes request of a specified view
+     *
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return AbstractView
+     *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>
      */
-    public function asImage()
+    function __call($name, $arguments)
     {
-        return new ImageView($this->attachedFile);
+        return $this->getView($name);
     }
 
-    public function asRaw()
+    /**
+     * @param string $name
+     *
+     * @return AbstractView
+     *
+     * @throws ViewNotFoundException
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    private function getView($name)
     {
-        return new RawView($this->attachedFile);
-    }
-
-    public function bySettings($settings)
-    {
-        $settingsParts = explode(RawView::SETTINGS_SEPARATOR, $settings);
-        $methodName = 'as' . ucfirst(array_shift($settingsParts));
-        if(method_exists($this, $methodName) == false) {
-            throw new SettingsIsIncorrect('Method "' . $methodName . '" does not exist');
+        $shortClassName = ucfirst($name) . 'View';
+        $classNameParts = explode('\\', self::class);
+        $lastPosition = count($classNameParts) - 1;
+        $classNameParts[$lastPosition] = $shortClassName;
+        $className = implode('\\', $classNameParts);
+        if (class_exists($className)) {
+            return new $className(['attachedFile' => $this->attachedFile]);
         }
 
-        /** @var RawView $view */
-        $view = call_user_func([$this, $methodName]);
-        $view->setSettingsArray($settingsParts);
-        return $view;
+        throw new ViewNotFoundException($name);
     }
 }

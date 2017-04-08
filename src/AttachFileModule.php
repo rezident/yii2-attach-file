@@ -16,9 +16,17 @@ class AttachFileModule extends Module
      */
     public $originalsPath;
 
+    /**
+     * Path, where views will be stored
+     * @var string
+     */
     public $viewsPath;
 
-    public $webPath;
+    /**
+     * Url prefix for views in an url
+     * @var string
+     */
+    public $webPrefix;
 
     /**
      * @var AttachFileModule

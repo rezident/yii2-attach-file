@@ -16,8 +16,12 @@ use yii\db\ActiveQuery;
 class AttachedFileViewQuery extends ActiveQuery
 {
     /**
+     * Adds the condition for searching by attached file
+     *
      * @param AttachedFile $attachedFile
+     *
      * @return $this
+     *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>
      */
     public function byAttachedFile(AttachedFile $attachedFile)
@@ -28,26 +32,34 @@ class AttachedFileViewQuery extends ActiveQuery
     }
 
     /**
-     * @param string $settings
+     * Adds the condition for searching by viewConfigHash
+     *
+     * @param string $viewConfigHash
+     *
      * @return $this
+     *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>
      */
-    public function bySettings($settings)
+    public function byViewConfigHash($viewConfigHash)
     {
         return $this->andWhere([
-            'settings' => $settings
+            'view_config_hash' => $viewConfigHash
         ]);
     }
 
     /**
-     * @param string $md5Hash
+     * Adds the condition for searching by model id
+     *
+     * @param int $id
+     *
      * @return $this
+     *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>
      */
-    public function byAttachedFileMd5Hash($md5Hash)
+    public function byId($id)
     {
-        return $this->joinWith('attachedFile')->andWhere([
-            'md5_hash' => $md5Hash
+        return $this->andWhere([
+            'id' => $id
         ]);
     }
 }

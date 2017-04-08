@@ -4,16 +4,13 @@
 namespace rezident\attachfile\behaviors;
 
 
-use DateTime;
 use ReflectionClass;
+use rezident\attachfile\attachers\AbstractAttacher;
 use rezident\attachfile\attachers\LocalFile;
 use rezident\attachfile\collections\AttachedFilesCollection;
 use rezident\attachfile\exceptions\ModelIsUnsaved;
-use rezident\attachfile\models\AttachedFile;
-use rezident\attachfile\traits\AttachedFileImportTrait;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
-use yii\helpers\FileHelper;
 
 class AttachFileBehavior extends Behavior
 {
@@ -33,20 +30,22 @@ class AttachFileBehavior extends Behavior
      */
     private $attachedFiles;
 
-
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         $this->attachedFiles = new AttachedFilesCollection($this);
         parent::init();
     }
 
-    public function events()
-    {
-        return [
-
-        ];
-    }
-
+    /**
+     * Checks whether the model is saved
+     *
+     * @throws ModelIsUnsaved
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
     public function checkIsSaved()
     {
         if (isset($this->owner->primaryKey) == false) {
@@ -74,7 +73,6 @@ class AttachFileBehavior extends Behavior
     public function getModelKey()
     {
         if(isset($this->modelKey) == false) {
-
             $reflectionClass = new ReflectionClass($this->owner);
             $this->modelKey = $reflectionClass->getShortName();
         }
@@ -95,7 +93,9 @@ class AttachFileBehavior extends Behavior
 
     /**
      * @param string $className
-     * @return LocalFile
+     *
+     * @return AbstractAttacher
+     *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>
      */
     public function getAttacher($className = LocalFile::class)

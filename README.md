@@ -1,6 +1,6 @@
 # yii2-attach-file
 This extension for yii2 allows you to attach different uploaded files to models.
-**The extension is not done! It does not work!**
+**The extension is not done! It does not work! Version 0.9 for testing in the real project.**
 
 ## Configuration
 

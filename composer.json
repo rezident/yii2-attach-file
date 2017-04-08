@@ -1,6 +1,6 @@
 {
     "name": "rezident/yii2-attach-file",
-    "description": "This extension for yii2 allows you to attach different uploaded files to models",
+    "description": "This extension for yii2 allows you to attach different uploaded files to models and to represent ones in the different views",
     "type": "yii2-extension",
     "require": {
         "yiisoft/yii2": "^2.0",

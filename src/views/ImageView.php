@@ -4,76 +4,194 @@
 namespace rezident\attachfile\views;
 
 
-class ImageView extends RawView
+use rezident\attachfile\views\extra\image\ImageResizer;
+use rezident\attachfile\views\extra\image\ImageResizerProportional;
+
+abstract class ImageView extends AbstractView
 {
-    const FORMAT_JPEG = 'jpg';
-
-    const FORMAT_PNG = 'png';
+    const QUALITY_DEFAULT = 75;
 
     /**
-     * Width of the image
      * @var int
      */
-    private $width;
+    public $width;
 
     /**
-     * Height of the image
      * @var int
      */
-    private $height;
+    public $height;
 
     /**
-     * Quality of the output image
-     * @var float
+     * @var int
      */
-    private $quality = 0.75;
+    public $resizeMode = ImageResizer::RESIZE_MODE_PAD;
 
     /**
-     * Format of the output image
+     * @var int
+     */
+    public $anchor = ImageResizer::ANCHOR_CENTER_CENTER;
+
+    /**
      * @var string
      */
-    private $format = self::FORMAT_JPEG;
+    public $padColor = ImageResizer::PAD_COLOR_BLACK;
 
+    /**
+     * @var int
+     */
+    public $quality = self::QUALITY_DEFAULT;
+
+    /**
+     * Sets the width of the output image
+     *
+     * @param int $width
+     *
+     * @return $this
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
     public function width($width)
     {
         $this->width = $width;
         return $this;
     }
 
+    /**
+     * Sets the height of the output image
+     *
+     * @param int $height
+     *
+     * @return $this
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
     public function height($height)
     {
         $this->height = $height;
         return $this;
     }
 
-    public function getWidth()
+    /**
+     * Sets the resize mode of the output image
+     *
+     * @param int $resizeMode
+     *
+     * @return $this
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function resizeMode($resizeMode)
     {
-        return $this->width;
+        $this->resizeMode = $resizeMode;
+        return $this;
     }
 
-    public function getHeight()
+    /**
+     * Sets the anchor of the output image
+     *
+     * @param int $anchor
+     *
+     * @return $this
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function anchor($anchor)
     {
-        return $this->height;
+        $this->anchor = $anchor;
+        return $this;
     }
 
-    public function getSettingsArray()
+    /**
+     * Sets the pad color of the output image
+     *
+     * @param string $padColor
+     *
+     * @return $this
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function padColor($padColor)
     {
-        return [$this->width, $this->height];
+        $this->padColor = $padColor;
+        return $this;
     }
 
-    public function setSettingsArray(array $settings)
+    /**
+     * Sets the quality of the output image (0-100)
+     *
+     * @param int $quality
+     *
+     * @return $this
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function quality($quality)
     {
-        if(!empty($settings[0])) {
-            $this->width = $settings[0];
+        $this->quality = $quality;
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function render()
+    {
+        $image = $this->getOriginalImage();
+        if($image) {
+            imagesavealpha($image, true);
+            if($this->isSizeSpecified()) {
+                $imageResizer = ImageResizer::create($this->width, $this->height, $this->resizeMode, $this->anchor, $this->padColor);
+                $image = $imageResizer->getResizedImage($image);
+            }
+
+            $this->output($image);
+        }
+    }
+
+    /**
+     * Renders an image
+     *
+     * @param resource $image
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    abstract protected function output($image);
+
+
+    /**
+     * @return null|resource
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    private function getOriginalImage()
+    {
+        $mime = $this->attachedFile->getMimeType();
+        if(mb_strpos($mime, 'png')) {
+            return imagecreatefrompng($this->attachedFile->getOriginalFilePath());
         }
 
-        if(!empty($settings[1])) {
-            $this->height = $settings[1];
+        if(mb_strpos($mime, 'jpeg')) {
+            return imagecreatefromjpeg($this->attachedFile->getOriginalFilePath());
         }
+
+        if(mb_strpos($mime, 'gif')) {
+            return imagecreatefromgif($this->attachedFile->getOriginalFilePath());
+        }
+
+        $resource = @imagecreatefrompng($this->attachedFile->getOriginalFilePath());
+        $resource ?: @imagecreatefromjpeg($this->attachedFile->getOriginalFilePath());
+        $resource ?: @imagecreatefromgif($this->attachedFile->getOriginalFilePath());
+
+        return $resource ?: null;
     }
 
-    public function getOutputExtension()
+    /**
+     * @return bool
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    private function isSizeSpecified()
     {
-        return $this->format;
+        return $this->width || $this->height;
     }
 }

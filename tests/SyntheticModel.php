@@ -33,7 +33,7 @@ class SyntheticModel extends ActiveRecord
         return [
             'specified' => [
                 'class' => AttachFileBehavior::class,
-                'modelKey' => 'specified'
+                'modelKey' => 'synthetic'
             ],
             'notSpecified' => AttachFileBehavior::class
         ];

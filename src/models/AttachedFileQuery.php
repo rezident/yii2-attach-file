@@ -15,6 +15,16 @@ use yii\db\ActiveQuery;
  */
 class AttachedFileQuery extends ActiveQuery
 {
+    /**
+     * Adds the condition for searching by modelKey and modelId
+     *
+     * @param string $modelKey
+     * @param int $modelId
+     *
+     * @return $this
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
     public function byModelKeyAndModelId($modelKey, $modelId)
     {
         return $this->andWhere([

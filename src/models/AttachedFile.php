@@ -6,6 +6,7 @@ namespace rezident\attachfile\models;
 
 use DateTime;
 use rezident\attachfile\AttachFileModule;
+use rezident\attachfile\behaviors\AttributesReadOnlyBehavior;
 use rezident\attachfile\views\ViewsFactory;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveRecord;
@@ -32,6 +33,28 @@ class AttachedFile extends ActiveRecord
      */
     private $viewsFactory;
 
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'readOnly' => [
+                'class' => AttributesReadOnlyBehavior::class,
+                'attributes' => [
+                    'id', 'model_key', 'model_id', 'name', 'md5_hash', 'size', 'uploaded_at'
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * Stores the original file in storage
+     *
+     * @param string $absolutePath
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
     public function storeOriginalFile($absolutePath)
     {
         $originalsPath = $this->getOriginalsPath();
@@ -43,7 +66,10 @@ class AttachedFile extends ActiveRecord
     }
 
     /**
+     * Returns the view factory
+     *
      * @return ViewsFactory
+     *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>
      */
     public function getView()
@@ -55,16 +81,14 @@ class AttachedFile extends ActiveRecord
         return $this->viewsFactory;
     }
 
-    public function getExtension()
-    {
-        return mb_strtolower(pathinfo($this->name, PATHINFO_EXTENSION));
-    }
 
     /**
      * Returns path of originals
      *
      * @return string
+     *
      * @throws InvalidConfigException
+     *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>
      */
     public function getOriginalsPath()
@@ -81,11 +105,36 @@ class AttachedFile extends ActiveRecord
      * Returns path to the original file
      *
      * @return string
+     *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>
      */
     public function getOriginalFilePath()
     {
         return $this->getOriginalsPath() . '/' . $this->md5_hash;
+    }
+
+    /**
+     * Returns MIME-type of the file
+     *
+     * @return string
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function getMimeType()
+    {
+        return mime_content_type($this->getOriginalFilePath());
+    }
+
+    /**
+     * Returns an extension of the file
+     *
+     * @return string
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function getExtension()
+    {
+        return pathinfo($this->name, PATHINFO_EXTENSION);
     }
 
     /**

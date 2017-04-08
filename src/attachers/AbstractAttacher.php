@@ -22,12 +22,21 @@ abstract class AbstractAttacher
         $this->behaviour = $behavior;
     }
 
+    /**
+     * @param string $absolutePath
+     * @param bool $isMain
+     * @param string $name
+     *
+     * @return AttachedFile
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
     private function attachFile($absolutePath, $isMain, $name)
     {
         $this->behaviour->checkIsSaved();
 
         if ($isMain) {
-            $this->behaviour->getAttachedFiles()->resetIsMainInAllFiles();
+            $this->behaviour->getAttachedFiles()->resetIsMainInAllFiles(false);
         }
 
         $file = new AttachedFile();
@@ -40,8 +49,8 @@ abstract class AbstractAttacher
         $file->uploaded_at = (new DateTime())->getMysqlDateTimeString();
 
         $file->storeOriginalFile($absolutePath);
-        $this->behaviour->getAttachedFiles()->addFile($file);
-        $this->behaviour->getAttachedFiles()->saveFiles();
+        $this->behaviour->getAttachedFiles()->add($file);
+        $this->behaviour->getAttachedFiles()->save();
 
         return $file;
     }
