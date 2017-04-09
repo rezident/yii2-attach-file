@@ -9,7 +9,7 @@ class JpgView extends ImageView
     /**
      * @inheritdoc
      */
-    public function getExtension()
+    protected function getExtension()
     {
         return 'jpg';
     }

@@ -5,10 +5,9 @@ namespace rezident\attachfile\models;
 
 
 use DateTime;
-use rezident\attachfile\AttachFileModule;
-use yii\base\InvalidConfigException;
+use rezident\attachfile\views\AbstractView;
 use yii\db\ActiveRecord;
-use yii\helpers\FileHelper;
+use yii\helpers\Json;
 
 /**
  * Class AttachedFileView
@@ -25,6 +24,7 @@ use yii\helpers\FileHelper;
  */
 class AttachedFileView extends ActiveRecord
 {
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -32,6 +32,37 @@ class AttachedFileView extends ActiveRecord
     {
         return $this->hasOne(AttachedFile::class, ['id' => 'attached_file_id']);
     }
+
+    public function setAttachedFile(AttachedFile $attachedFile)
+    {
+        $this->attachedFile = $attachedFile;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function delete()
+    {
+        $view = $this->getView();
+        unlink($view->getViewFilePath($this));
+        return parent::delete();
+    }
+
+    /**
+     * Returns the view
+     *
+     * @return AbstractView
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function getView()
+    {
+        $config = Json::decode($this->view_config);
+        $config['attachedFile'] = $this->attachedFile;
+        /** @var AbstractView $view */
+        $view = \Yii::createObject($config);
+        return $view;
+    }
+
 
     /**
      * Returns a query

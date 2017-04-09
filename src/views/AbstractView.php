@@ -45,7 +45,7 @@ abstract class AbstractView extends Object
      */
     public function getContent(AttachedFileView $attachedFileView)
     {
-        $viewFilePath = $this->getViewPath() . '/' . $this->getFileName($attachedFileView);
+        $viewFilePath = $this->getViewFilePath($attachedFileView);
         if(file_exists($viewFilePath)) {
             return file_get_contents($viewFilePath);
         }
@@ -213,5 +213,16 @@ abstract class AbstractView extends Object
         $result .= '/';
         $result .= mb_substr($this->attachedFile->md5_hash, 0, 3);
         return $result;
+    }
+
+    /**
+     *
+     * @param AttachedFileView $attachedFileView
+     * @return string
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function getViewFilePath(AttachedFileView $attachedFileView)
+    {
+        return $this->getViewPath() . '/' . $this->getFileName($attachedFileView);
     }
 }

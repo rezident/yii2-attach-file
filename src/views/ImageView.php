@@ -5,7 +5,6 @@ namespace rezident\attachfile\views;
 
 
 use rezident\attachfile\views\extra\image\ImageResizer;
-use rezident\attachfile\views\extra\image\ImageResizerProportional;
 
 abstract class ImageView extends AbstractView
 {

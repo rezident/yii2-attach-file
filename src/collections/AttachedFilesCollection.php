@@ -280,6 +280,62 @@ class AttachedFilesCollection
     }
 
     /**
+     * Deletes an attached file
+     *
+     * @param AttachedFile $attachedFile
+     *
+     * @return bool
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function delete(AttachedFile $attachedFile)
+    {
+        $this->initialize();
+        $position = array_search($attachedFile, $this->attachedFiles, true);
+        if($position !== false) {
+            return $this->deleteByPosition($position);
+        }
+
+        return false;
+    }
+
+    /**
+     * Deletes an attached file by its position
+     *
+     * @param int $position
+     *
+     * @return bool
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function deleteByPosition($position)
+    {
+        $this->initialize();
+        if($this->inRange($position)) {
+            $this->attachedFiles[$position]->delete();
+            array_splice($this->attachedFiles, $position, 1);
+            $this->save();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Deletes all of the attached files
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function deleteAll()
+    {
+        foreach ($this->attachedFiles as $attachedFile) {
+            $attachedFile->delete();
+        }
+
+        $this->attachedFiles = [];
+    }
+
+    /**
      * @param int $position
      *
      * @return bool

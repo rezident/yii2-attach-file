@@ -32,4 +32,20 @@ class AttachedFileQuery extends ActiveQuery
             'model_id' => $modelId
         ])->orderBy(['position' => SORT_ASC]);
     }
+
+    /**
+     * Adds the condition for searching by md5_hash
+     *
+     * @param string $md5Hash
+     *
+     * @return $this
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function byMd5Hash($md5Hash)
+    {
+        return $this->andWhere([
+            'md5_hash' => $md5Hash
+        ]);
+    }
 }

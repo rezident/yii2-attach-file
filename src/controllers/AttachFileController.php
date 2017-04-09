@@ -5,9 +5,7 @@ namespace rezident\attachfile\controllers;
 
 
 use rezident\attachfile\models\AttachedFileView;
-use rezident\attachfile\views\RawView;
 use rezident\attachfile\views\AbstractView;
-use yii\helpers\Json;
 use yii\helpers\StringHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -39,10 +37,8 @@ class AttachFileController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $config = Json::decode($attachedFileView->view_config);
-        $config['attachedFile'] = $attachedFileView->attachedFile;
-        /** @var AbstractView $view */
-        $view = \Yii::createObject($config);
+        $view = $attachedFileView->getView();
+
         if (is_a($view, AbstractView::class) == false) {
             throw new ServerErrorHttpException();
         }
@@ -52,5 +48,6 @@ class AttachFileController extends Controller
 
         return $view->getContent($attachedFileView);
     }
+
 
 }

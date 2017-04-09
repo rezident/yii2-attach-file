@@ -138,6 +138,25 @@ class AttachedFile extends ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public function delete()
+    {
+        $attachedFileViews = AttachedFileView::find()->byAttachedFile($this)->joinWith('attachedFile')->all();
+        foreach ($attachedFileViews as $attachedFileView) {
+            $attachedFileView->delete();
+        }
+
+
+        $deleteResult = parent::delete();
+        if(self::find()->byMd5Hash($this->md5_hash)->count() == 0) {
+            unlink($this->getOriginalFilePath());
+        }
+
+        return $deleteResult;
+    }
+
+    /**
      * Returns a query
      *
      * @return AttachedFileQuery

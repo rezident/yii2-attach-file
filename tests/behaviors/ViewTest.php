@@ -146,4 +146,24 @@ class ViewTest extends TestCase
         $view->getContent(AttachedFileView::find()->one());
 
     }
+
+    /**
+     * @test
+     */
+    public function createViewsAndDeleteAttachedFile()
+    {
+        $file = $this->syntheticModel->getAttacher()->attach(__DIR__ . '/../img/logo.png');
+        $view = $file->getView()->png();
+        $view->getUrl();
+        $view->getContent(AttachedFileView::find()->byId(1)->one());
+        $view = $file->getView()->raw();
+        $view->getUrl();
+        $view->getContent(AttachedFileView::find()->byId(2)->one());
+
+        $collection = $this->syntheticModel->getAttachedFiles();
+        $this->assertTrue($collection->delete($file));
+        $this->assertCount(0, AttachedFileView::find()->all());
+
+        $this->assertFileNotExists(__DIR__ . '/../../src/files/originals/synthetic/' . $file->md5_hash);
+    }
 }
