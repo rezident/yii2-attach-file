@@ -71,6 +71,14 @@ abstract class AbstractView extends Object
     }
 
     /**
+     * @param AttachedFile $attachedFile
+     */
+    public function setAttachedFile($attachedFile)
+    {
+        $this->attachedFile = $attachedFile;
+    }
+
+    /**
      * Renders a view
      *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>

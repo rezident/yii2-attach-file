@@ -85,7 +85,6 @@ class ViewTest extends TestCase
         $view = $file->getView()->png();
         $view->getUrl();
         $view->getContent(AttachedFileView::find()->one());
-        die;
     }
 
     /**
@@ -100,7 +99,6 @@ class ViewTest extends TestCase
             ->resizeMode(ImageResizer::RESIZE_MODE_STRETCH);
         $view->getUrl();
         $view->getContent(AttachedFileView::find()->one());
-//        die;
     }
 
     /**
@@ -116,7 +114,6 @@ class ViewTest extends TestCase
             ->padColor('FFAF00');
         $view->getUrl();
         $view->getContent(AttachedFileView::find()->one());
-//        die;
     }
 
     /**
