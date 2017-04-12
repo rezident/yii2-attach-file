@@ -328,6 +328,7 @@ class AttachedFilesCollection
      */
     public function deleteAll()
     {
+        $this->initialize();
         foreach ($this->attachedFiles as $attachedFile) {
             $attachedFile->delete();
         }
