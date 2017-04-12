@@ -3,21 +3,21 @@
 
 namespace rezident\attachfile\attachers;
 
-
 /**
- * Class FilesItemFile
+ * Class LocalFile
  * @author Yuri Nazarenko / rezident <mail@rezident.org>
  *
- * Attacher for an item of $_FILES variable
+ * Attacher for local files
  */
-class FilesItemFile extends AbstractAttacher
+class LocalFileAttacher extends AbstractAttacher
 {
     /**
      * @inheritdoc
      */
     protected function getAbsolutePath($source)
     {
-        return $source['tmp_name'];
+        return $source;
     }
+
 
 }
