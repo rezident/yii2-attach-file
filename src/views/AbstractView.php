@@ -80,6 +80,28 @@ abstract class AbstractView extends Object
     }
 
     /**
+     * Returns whether view path is empty
+     *
+     * @return bool
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function isViewPathEmpty()
+    {
+        return count(glob($this->getViewPath() . '/*')) == 0;
+    }
+
+    /**
+     * Deletes the view path with contents
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function deleteViewPath()
+    {
+        FileHelper::removeDirectory($this->getViewPath());
+    }
+
+    /**
      * Renders a view
      *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>

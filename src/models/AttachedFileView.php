@@ -45,6 +45,10 @@ class AttachedFileView extends ActiveRecord
     {
         $view = $this->getView();
         unlink($view->getViewFilePath($this));
+        if($view->isViewPathEmpty()) {
+            $view->deleteViewPath();
+        }
+
         return parent::delete();
     }
 
