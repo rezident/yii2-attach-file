@@ -59,7 +59,7 @@ class AttachedFileViewQuery extends ActiveQuery
     public function byId($id)
     {
         return $this->andWhere([
-            'id' => $id
+            AttachedFileView::tableName() . '.id' => $id
         ]);
     }
 }
