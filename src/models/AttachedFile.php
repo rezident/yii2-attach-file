@@ -42,7 +42,13 @@ class AttachedFile extends ActiveRecord
             'readOnly' => [
                 'class' => AttributesReadOnlyBehavior::class,
                 'attributes' => [
-                    'id', 'model_key', 'model_id', 'name', 'md5_hash', 'size', 'uploaded_at'
+                    'id',
+                    'model_key',
+                    'model_id',
+                    'name',
+                    'md5_hash',
+                    'size',
+                    'uploaded_at'
                 ]
             ]
         ];
@@ -94,11 +100,11 @@ class AttachedFile extends ActiveRecord
     public function getOriginalsPath()
     {
         $originalsPath = \Yii::getAlias(AttachFileModule::getInstance()->originalsPath);
-        if($originalsPath == false) {
-            throw new InvalidConfigException('You should set «originalsPath» in config');
+        if ($originalsPath) {
+            return $originalsPath . '/' . $this->model_key;
         }
 
-        return $originalsPath . '/' . $this->model_key;
+        throw new InvalidConfigException('You should set «originalsPath» in config');
     }
 
     /**
@@ -149,7 +155,7 @@ class AttachedFile extends ActiveRecord
 
 
         $deleteResult = parent::delete();
-        if(self::find()->byMd5Hash($this->md5_hash)->count() == 0) {
+        if (self::find()->byMd5Hash($this->md5_hash)->count() == 0) {
             unlink($this->getOriginalFilePath());
         }
 

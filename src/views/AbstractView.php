@@ -10,6 +10,7 @@ use rezident\attachfile\AttachFileModule;
 use rezident\attachfile\extensions\DateTime;
 use rezident\attachfile\models\AttachedFile;
 use rezident\attachfile\models\AttachedFileView;
+use yii\base\InvalidConfigException;
 use yii\base\Object;
 use yii\helpers\FileHelper;
 use yii\helpers\Json;
@@ -100,27 +101,41 @@ abstract class AbstractView extends Object
     /**
      * @return string
      *
+     * @throws InvalidConfigException
+     *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>
      */
     private function getViewPath()
     {
-        $result = rtrim(\Yii::getAlias(AttachFileModule::getInstance()->viewsPath), '/');
-        $result .= '/';
-        $result .= $this->getViewDirPath();
-        return $result;
+        $viewsPath = AttachFileModule::getInstance()->viewsPath;
+        if($viewsPath) {
+            $result = rtrim(\Yii::getAlias($viewsPath), '/');
+            $result .= '/';
+            $result .= $this->getViewDirPath();
+            return $result;
+        }
+
+        throw new InvalidConfigException('You should set «viewsPath» in config');
     }
 
     /**
      * @return string
      *
+     * @throws InvalidConfigException
+     *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>
      */
     private function getUrlPath()
     {
-        $result = rtrim(\Yii::getAlias(AttachFileModule::getInstance()->webPrefix), '/');
-        $result .= '/';
-        $result .= $this->getViewDirPath();
-        return $result;
+        $webPrefix = AttachFileModule::getInstance()->webPrefix;
+        if($webPrefix) {
+            $result = rtrim(\Yii::getAlias($webPrefix), '/');
+            $result .= '/';
+            $result .= $this->getViewDirPath();
+            return $result;
+        }
+
+        throw new InvalidConfigException('You should set «webPrefix» in config');
     }
 
     /**
