@@ -15,8 +15,8 @@ class m170206_112211_create_attached_file_view_table extends Migration
     public function up()
     {
         $this->createTable(AttachedFileView::tableName(), [
-            'id' => $this->primaryKey(),
-            'attached_file_id' => $this->integer()->notNull(),
+            'id' => $this->primaryKey()->unsigned(),
+            'attached_file_id' => $this->integer()->unsigned()->notNull(),
             'view_config' => $this->text()->notNull(),
             'view_config_hash' => $this->string(8)->notNull(),
             'extension' => $this->string(8)->notNull(),
