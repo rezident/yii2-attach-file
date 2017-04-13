@@ -5,6 +5,7 @@ namespace rezident\attachfile\tests\behaviors;
 
 
 use PHPUnit\Framework\TestCase;
+use rezident\attachfile\attachers\LocalFileAttacher;
 use rezident\attachfile\models\AttachedFile;
 use rezident\attachfile\models\AttachedFileView;
 use rezident\attachfile\tests\SyntheticModel;
@@ -32,7 +33,7 @@ class SecureModelsTest extends TestCase
      */
     public function doNotChangeAttachFileAttributes()
     {
-        $file = $this->syntheticModel->getAttacher()->attach(__DIR__ . '/../bootstrap.php');
+        $file = $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__DIR__ . '/../bootstrap.php');
         $oldId = $file->id;
         $oldModelKey = $file->model_key;
         $oldModelId = $file->model_id;

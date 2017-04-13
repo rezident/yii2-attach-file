@@ -363,7 +363,7 @@ class AttachedFilesCollection
      */
     private function fetch()
     {
-        $this->attachedFiles = AttachedFile::find()->byModelKeyAndModelId($this->behavior->getModelKey(), $this->behavior->owner->primaryKey)->all();
+        $this->attachedFiles = $this->behavior->owner->attachedFiles;
     }
 
 }

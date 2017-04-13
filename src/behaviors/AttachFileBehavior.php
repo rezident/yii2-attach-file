@@ -9,9 +9,16 @@ use rezident\attachfile\attachers\AbstractAttacher;
 use rezident\attachfile\attachers\UploadedFileAttacher;
 use rezident\attachfile\collections\AttachedFilesCollection;
 use rezident\attachfile\exceptions\ModelIsUnsaved;
+use rezident\attachfile\models\AttachedFile;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 
+/**
+ * Class AttachFileBehavior
+ * @author Yuri Nazarenko / rezident <mail@rezident.org>
+ *
+ * @property AttachedFile[] $attachedFiles
+ */
 class AttachFileBehavior extends Behavior
 {
 
@@ -28,14 +35,14 @@ class AttachFileBehavior extends Behavior
     /**
      * @var AttachedFilesCollection
      */
-    private $attachedFiles;
+    private $attachedFilesCollection;
 
     /**
      * @inheritdoc
      */
     public function init()
     {
-        $this->attachedFiles = new AttachedFilesCollection($this);
+        $this->attachedFilesCollection = new AttachedFilesCollection($this);
         parent::init();
     }
 
@@ -72,7 +79,7 @@ class AttachFileBehavior extends Behavior
      */
     public function getModelKey()
     {
-        if(isset($this->modelKey) == false) {
+        if (isset($this->modelKey) == false) {
             $reflectionClass = new ReflectionClass($this->owner);
             $this->modelKey = $reflectionClass->getShortName();
         }
@@ -86,9 +93,9 @@ class AttachFileBehavior extends Behavior
      * @return AttachedFilesCollection
      * @author Yuri Nazarenko / rezident <mail@rezident.org>
      */
-    public function getAttachedFiles()
+    public function getAttachedFilesCollection()
     {
-        return $this->attachedFiles;
+        return $this->attachedFilesCollection;
     }
 
     /**
@@ -101,6 +108,14 @@ class AttachFileBehavior extends Behavior
     public function getAttacher($className = UploadedFileAttacher::class)
     {
         return new $className($this);
+    }
+
+    public function getAttachedFiles()
+    {
+        return $this->owner->hasMany(
+            AttachedFile::class,
+            ['model_id' => key($this->owner->getPrimaryKey(true))]
+        )->andWhere([AttachedFile::tableName() . '.model_key' => $this->getModelKey()]);
     }
 
 }

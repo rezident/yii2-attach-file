@@ -36,7 +36,7 @@ abstract class AbstractAttacher
         $this->behaviour->checkIsSaved();
 
         if ($isMain) {
-            $this->behaviour->getAttachedFiles()->resetIsMainInAllFiles(false);
+            $this->behaviour->getAttachedFilesCollection()->resetIsMainInAllFiles(false);
         }
 
         $file = new AttachedFile();
@@ -49,8 +49,8 @@ abstract class AbstractAttacher
         $file->uploaded_at = (new DateTime())->getMysqlDateTimeString();
 
         $file->storeOriginalFile($absolutePath);
-        $this->behaviour->getAttachedFiles()->add($file);
-        $this->behaviour->getAttachedFiles()->save();
+        $this->behaviour->getAttachedFilesCollection()->add($file);
+        $this->behaviour->getAttachedFilesCollection()->save();
 
         return $file;
     }

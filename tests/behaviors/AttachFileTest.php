@@ -6,6 +6,7 @@ require_once __DIR__ . '/../bootstrap.php';
 
 use Generator;
 use PHPUnit\Framework\TestCase;
+use rezident\attachfile\attachers\LocalFileAttacher;
 use rezident\attachfile\behaviors\AttachFileBehavior;
 use rezident\attachfile\models\AttachedFile;
 use rezident\attachfile\models\AttachedFileView;
@@ -55,7 +56,7 @@ class AttachFileTest extends TestCase
      */
     public function returnEmptyArrayAsAttachedFiles()
     {
-        $this->assertEquals(0, $this->syntheticModel->getAttachedFiles()->count());
+        $this->assertEquals(0, $this->syntheticModel->getAttachedFilesCollection()->count());
     }
 
     /**
@@ -64,7 +65,7 @@ class AttachFileTest extends TestCase
      */
     public function attachFileToUnsavedModel()
     {
-        $this->syntheticModel->getAttacher()->attach(__FILE__);
+        $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__FILE__);
     }
 
 
@@ -74,7 +75,7 @@ class AttachFileTest extends TestCase
     public function attachLocalFile()
     {
         $this->syntheticModel->save();
-        $attachedFile = $this->syntheticModel->getAttacher()->attach(__FILE__);
+        $attachedFile = $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__FILE__);
         $this->assertFileEquals(__FILE__, __DIR__ . '/../../src/files/originals/synthetic/' . $attachedFile->md5_hash);
     }
 
@@ -84,11 +85,11 @@ class AttachFileTest extends TestCase
     public function attachLocalFilesWithRightPositions()
     {
         $this->syntheticModel->save();
-        $attachedFile = $this->syntheticModel->getAttacher()->attach(__FILE__);
-        $attachedFile1 = $this->syntheticModel->getAttacher()->attach(__DIR__ . '/../img/logo.png');
+        $attachedFile = $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__FILE__);
+        $attachedFile1 = $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__DIR__ . '/../img/logo.png');
         $this->assertEquals($attachedFile->position, 1);
         $this->assertEquals($attachedFile1->position, 2);
-        $this->assertEquals(2, $this->syntheticModel->getAttachedFiles()->count());
+        $this->assertEquals(2, $this->syntheticModel->getAttachedFilesCollection()->count());
     }
 
     /**
@@ -97,10 +98,10 @@ class AttachFileTest extends TestCase
     public function moveAttachedFiles()
     {
         $this->syntheticModel->save();
-        $this->syntheticModel->getAttacher()->attach(__FILE__);
-        $this->syntheticModel->getAttacher()->attach(__DIR__ . '/../img/logo.png');
-        $this->syntheticModel->getAttacher()->attach(__DIR__ . '/../bootstrap.php');
-        $attachedFiles = $this->syntheticModel->getAttachedFiles();
+        $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__FILE__);
+        $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__DIR__ . '/../img/logo.png');
+        $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__DIR__ . '/../bootstrap.php');
+        $attachedFiles = $this->syntheticModel->getAttachedFilesCollection();
         $attachedFiles->move(2, 0);
         $this->assertEquals('bootstrap.php', $attachedFiles->get(0)->name);
         $attachedFiles->move(1, 2);
@@ -115,18 +116,18 @@ class AttachFileTest extends TestCase
     public function setAsMainFile()
     {
         $this->syntheticModel->save();
-        $file1 = $this->syntheticModel->getAttacher()->attach(__FILE__, true);
+        $file1 = $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__FILE__, true);
         $this->assertTrue($file1->is_main);
-        $file2 = $this->syntheticModel->getAttacher()->attach(__DIR__ . '/../img/logo.png', true);
+        $file2 = $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__DIR__ . '/../img/logo.png', true);
         $this->assertTrue($file2->is_main);
         $this->assertFalse($file1->is_main);
-        $file3 = $this->syntheticModel->getAttacher()->attach(__DIR__ . '/../bootstrap.php', true);
+        $file3 = $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__DIR__ . '/../bootstrap.php', true);
         $this->assertTrue($file3->is_main);
         $this->assertFalse($file1->is_main);
         $this->assertFalse($file2->is_main);
 
-        $this->assertEquals($file3, $this->syntheticModel->getAttachedFiles()->getMain());
-        $this->assertTrue($this->syntheticModel->getAttachedFiles()->setMain(1));
+        $this->assertEquals($file3, $this->syntheticModel->getAttachedFilesCollection()->getMain());
+        $this->assertTrue($this->syntheticModel->getAttachedFilesCollection()->setMain(1));
         $this->assertTrue($file2->is_main);
         $this->assertFalse($file1->is_main);
         $this->assertFalse($file3->is_main);
@@ -138,10 +139,10 @@ class AttachFileTest extends TestCase
     public function getByName()
     {
         $this->syntheticModel->save();
-        $this->syntheticModel->getAttacher()->attach(__FILE__);
-        $file = $this->syntheticModel->getAttacher()->attach(__DIR__ . '/../img/logo.png');
-        $this->syntheticModel->getAttacher()->attach(__DIR__ . '/../bootstrap.php');
-        $this->assertEquals($file, $this->syntheticModel->getAttachedFiles()->getByName('logo.png'));
+        $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__FILE__);
+        $file = $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__DIR__ . '/../img/logo.png');
+        $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__DIR__ . '/../bootstrap.php');
+        $this->assertEquals($file, $this->syntheticModel->getAttachedFilesCollection()->getByName('logo.png'));
     }
 
     /**
@@ -150,11 +151,11 @@ class AttachFileTest extends TestCase
     public function getGenerator()
     {
         $this->syntheticModel->save();
-        $file1 = $this->syntheticModel->getAttacher()->attach(__FILE__);
-        $file2 = $this->syntheticModel->getAttacher()->attach(__DIR__ . '/../img/logo.png');
-        $file3 = $this->syntheticModel->getAttacher()->attach(__DIR__ . '/../bootstrap.php');
+        $file1 = $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__FILE__);
+        $file2 = $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__DIR__ . '/../img/logo.png');
+        $file3 = $this->syntheticModel->getAttacher(LocalFileAttacher::class)->attach(__DIR__ . '/../bootstrap.php');
 
-        $generator = $this->syntheticModel->getAttachedFiles()->getGenerator();
+        $generator = $this->syntheticModel->getAttachedFilesCollection()->getGenerator();
         $this->assertInstanceOf(Generator::class, $generator);
         $this->assertEquals($file1, $generator->current());
         $generator->next();
