@@ -6,7 +6,7 @@ namespace rezident\attachfile\behaviors;
 
 use ReflectionClass;
 use rezident\attachfile\attachers\AbstractAttacher;
-use rezident\attachfile\attachers\LocalFileAttacher;
+use rezident\attachfile\attachers\UploadedFileAttacher;
 use rezident\attachfile\collections\AttachedFilesCollection;
 use rezident\attachfile\exceptions\ModelIsUnsaved;
 use yii\base\Behavior;
@@ -98,7 +98,7 @@ class AttachFileBehavior extends Behavior
      *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>
      */
-    public function getAttacher($className = LocalFileAttacher::class)
+    public function getAttacher($className = UploadedFileAttacher::class)
     {
         return new $className($this);
     }
