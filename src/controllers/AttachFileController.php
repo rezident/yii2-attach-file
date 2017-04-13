@@ -17,7 +17,7 @@ class AttachFileController extends Controller
     public function actionGet($modelKey, $path, $viewId, $fileName)
     {
         $attachedFileView = AttachedFileView::find()->byId($viewId)->joinWith('attachedFile')->one();
-        if ($attachedFileView) {
+        if (!$attachedFileView) {
             throw new NotFoundHttpException();
         }
 
