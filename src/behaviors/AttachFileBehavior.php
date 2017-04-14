@@ -11,6 +11,7 @@ use rezident\attachfile\collections\AttachedFilesCollection;
 use rezident\attachfile\exceptions\ModelIsUnsaved;
 use rezident\attachfile\models\AttachedFile;
 use yii\base\Behavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -110,12 +111,18 @@ class AttachFileBehavior extends Behavior
         return new $className($this);
     }
 
+    /**
+     * @return ActiveQuery
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
     public function getAttachedFiles()
     {
         return $this->owner->hasMany(
             AttachedFile::class,
             ['model_id' => key($this->owner->getPrimaryKey(true))]
-        )->andWhere([AttachedFile::tableName() . '.model_key' => $this->getModelKey()]);
+        )->andWhere(['in', AttachedFile::tableName() . '.model_key', [$this->getModelKey(), null]]);
     }
+
 
 }

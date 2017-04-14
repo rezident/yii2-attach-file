@@ -207,8 +207,12 @@ abstract class AbstractView extends Object
      *
      * @author Yuri Nazarenko / rezident <mail@rezident.org>
      */
-    private function getConfigStringHash($configString)
+    private function getConfigStringHash($configString = null)
     {
+        if($configString == null) {
+            $configString = $this->getConfigString();
+        }
+
         return mb_substr(md5($configString), 0, 8);
     }
 
