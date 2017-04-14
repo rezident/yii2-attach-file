@@ -121,7 +121,7 @@ class AttachFileBehavior extends Behavior
         return $this->owner->hasMany(
             AttachedFile::class,
             ['model_id' => key($this->owner->getPrimaryKey(true))]
-        )->andWhere([AttachedFile::tableName() . '.model_key' => $this->getModelKey()])->orWhere([AttachedFile::tableName() . '.model_key' => null]);
+        )->andOnCondition([AttachedFile::tableName() . '.model_key' => $this->getModelKey()]);
     }
 
 
