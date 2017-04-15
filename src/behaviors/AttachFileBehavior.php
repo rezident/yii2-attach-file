@@ -128,9 +128,10 @@ class AttachFileBehavior extends Behavior
     public function getAttachedMainFileView()
     {
         return $this->owner->hasOne(AttachedFileView::class, ['attached_file_id' => 'id'])
-            ->viaTable(AttachedFile::tableName(), ['model_id' => key($this->owner->getPrimaryKey(true))])
-            ->andOnCondition([AttachedFile::tableName() . '.model_key' => $this->getModelKey()])
-            ->andOnCondition([AttachedFile::tableName() . '.is_main' => 1]);
+            ->viaTable(AttachedFile::tableName(), ['model_id' => key($this->owner->getPrimaryKey(true))], function (ActiveQuery $query) {
+                $query->andOnCondition([AttachedFile::tableName() . '.model_key' => $this->getModelKey()]);
+                $query->andOnCondition([AttachedFile::tableName() . '.is_main' => 1]);
+            });
     }
 
 }
