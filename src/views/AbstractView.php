@@ -12,6 +12,7 @@ use rezident\attachfile\models\AttachedFile;
 use rezident\attachfile\models\AttachedFileView;
 use yii\base\InvalidConfigException;
 use yii\base\Object;
+use yii\db\ActiveQuery;
 use yii\helpers\FileHelper;
 use yii\helpers\Json;
 
@@ -99,6 +100,31 @@ abstract class AbstractView extends Object
     public function deleteViewPath()
     {
         FileHelper::removeDirectory($this->getViewPath());
+    }
+
+    /**
+     *
+     * @param AttachedFileView $attachedFileView
+     * @return string
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function getViewFilePath(AttachedFileView $attachedFileView)
+    {
+        return $this->getViewPath() . '/' . $this->getFileName($attachedFileView);
+    }
+
+    /**
+     * Joins the view of the main file to a model
+     *
+     * @param ActiveQuery $query
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public function joinMainFilesView(ActiveQuery $query)
+    {
+        $query->joinWith(['attachedMainFileView' => function(ActiveQuery $query) {
+            $query->andOnCondition([AttachedFileView::tableName() . '.view_config_hash' => $this->getConfigStringHash()]);
+        }]);
     }
 
     /**
@@ -256,14 +282,4 @@ abstract class AbstractView extends Object
         return $result;
     }
 
-    /**
-     *
-     * @param AttachedFileView $attachedFileView
-     * @return string
-     * @author Yuri Nazarenko / rezident <mail@rezident.org>
-     */
-    public function getViewFilePath(AttachedFileView $attachedFileView)
-    {
-        return $this->getViewPath() . '/' . $this->getFileName($attachedFileView);
-    }
 }

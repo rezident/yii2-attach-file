@@ -10,6 +10,7 @@ use rezident\attachfile\attachers\UploadedFileAttacher;
 use rezident\attachfile\collections\AttachedFilesCollection;
 use rezident\attachfile\exceptions\ModelIsUnsaved;
 use rezident\attachfile\models\AttachedFile;
+use rezident\attachfile\models\AttachedFileView;
 use yii\base\Behavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -124,5 +125,12 @@ class AttachFileBehavior extends Behavior
         )->andOnCondition([AttachedFile::tableName() . '.model_key' => $this->getModelKey()]);
     }
 
+    public function getAttachedMainFileView()
+    {
+        return $this->owner->hasOne(AttachedFileView::class, ['attached_file_id' => 'id'])
+            ->viaTable(AttachedFile::tableName(), ['model_id' => key($this->owner->getPrimaryKey(true))])
+            ->andOnCondition([AttachedFile::tableName() . '.model_key' => $this->getModelKey()])
+            ->andOnCondition([AttachedFile::tableName() . '.is_main' => 1]);
+    }
 
 }
