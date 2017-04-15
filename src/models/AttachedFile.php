@@ -81,7 +81,7 @@ class AttachedFile extends ActiveRecord
     public function getView()
     {
         if (isset($this->viewsFactory) == false) {
-            $this->viewsFactory = new ViewsFactory($this);
+            $this->viewsFactory = ViewsFactory::getInstance($this);
         }
 
         return $this->viewsFactory;

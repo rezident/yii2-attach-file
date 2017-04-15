@@ -22,9 +22,28 @@ class ViewsFactory
      */
     private $attachedFile;
 
-    public function __construct(AttachedFile $attachedFile)
+    /**
+     * ViewsFactory constructor.
+     *
+     * @param AttachedFile $attachedFile
+     */
+    private function __construct($attachedFile)
     {
         $this->attachedFile = $attachedFile;
+    }
+
+    /**
+     * Creates a new instance of the class
+     *
+     * @param AttachedFile|null $attachedFile
+     *
+     * @return ViewsFactory
+     *
+     * @author Yuri Nazarenko / rezident <mail@rezident.org>
+     */
+    public static function getInstance($attachedFile = null)
+    {
+        return new static($attachedFile);
     }
 
     /**
